@@ -35,19 +35,8 @@ def includeme(config):
     config.add_route('logged_in', '/logged_in')
     config.add_route('logout',    '/logout')
 
-    config.add_static_view(name='static', path='kotti_velruse:static')
-
-    ######################################################################################
-    #                                                                                    #
-    # This route named '' MUST BE THE LAST ONE in the global list of routes.             #
-    # It means that plugin kotti_velruse MUST BE THE LAST ONE in the list of includes.   #
-    #                                                                                    #
-    # It's definitely a bad idea to employ a route named ''.                             #
-    # But, in order to avoid this, we would have to change openid-selector too much :(   #
-    # ... which is outside of our requirements for this demo.                            #
-    #                                                                                    #
-    ######################################################################################
-
-    import os
-    openid_selector = '{}/openid-selector'.format( os.path.dirname(__file__))
-    config.add_static_view(name='', path=openid_selector)
+    import openid_selector
+    config.add_static_view(name='js',     path='openid_selector:/js')
+    config.add_static_view(name='css',    path='openid_selector:/css')
+    config.add_static_view(name='images', path='openid_selector:/images')
+    

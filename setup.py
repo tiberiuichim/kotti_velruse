@@ -20,7 +20,8 @@ long_description = (
 
 install_requires = [
     'Kotti',
-    'velruse',
+    'velruse>=1.1.2',
+    'openid-selector'
     ]
 
 
