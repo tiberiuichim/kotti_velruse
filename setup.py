@@ -18,14 +18,15 @@ long_description = (
     CHANGES
 )
 
-install_requires = [
-    'Kotti',
-    'velruse>=1.1.2',
-    'openid-selector'
+setup_requires = [
+    'setuptools_git >= 1.0',
     ]
 
-
-
+install_requires = [
+    'Kotti',
+    'rgomes-velruse',
+    'openid-selector'
+    ]
 
 
 setup(name='kotti_velruse',
@@ -35,7 +36,6 @@ setup(name='kotti_velruse',
       classifiers=[
           "Programming Language :: Python",
           "Framework :: Pyramid",
-          "Framework :: Pyramid :: Kotti",
           "Topic :: Internet :: WWW/HTTP",
           "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
       ],
@@ -47,7 +47,6 @@ setup(name='kotti_velruse',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      dependency_links = ['http://github.com/frgomes/velruse/tarball/feature.kotti_auth#egg=velruse-1.1.2'],
+      setup_requires=setup_requires, 
       install_requires=install_requires,
-      entry_points='',
       )

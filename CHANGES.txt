@@ -2,11 +2,10 @@
 ---
 
 -  Initial version, created as an example to velruse.
-   See: https://github.com/frgomes/velruse branch: feature.kotti_auth
+   See: https://github.com/frgomes/velruse/tree/feature.kotti_auth
 
 
 0.2
 ---
 
 - Initial version as a proper Kotti plugin.
-
