@@ -11,6 +11,13 @@ kotti_velruse
 .. _Contact : http://github.com/~frgomes
 
 
+kotti_velruse is a `Kotti`_ plugin which provides authentication via `Velruse`_, using
+methods such as: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and others
+
+.. _`Kotti`: http://kotti.readthedocs.org
+.. _`Velruse`: http://velruse.readthedocs.org
+
+
 Configuration
 -------------
 
