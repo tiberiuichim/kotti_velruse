@@ -151,4 +151,4 @@ This plugin depends on modified versions of:
 
 * velruse: https://github.com/frgomes/velruse/tree/feature.kotti_auth
 
-* openid-selector: https://github.com/frgomes/velruse
+* openid-selector: https://github.com/frgomes/openid-selector
