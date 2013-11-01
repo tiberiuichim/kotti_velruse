@@ -1,11 +1,22 @@
-0.1
----
+Changelog
+=========
+
+0.1 (not released)
+------------------
 
 -  Initial version, created as an example to velruse.
-   See: https://github.com/frgomes/velruse/tree/feature.kotti_auth
+   See: http://github.com/frgomes/velruse/tree/feature.kotti_auth
 
 
-0.2
----
+0.2 (31-Oct-2013)
+-----------------
 
 - Initial version as a proper Kotti plugin.
+
+
+0.2.1 (TBD)
+-----------
+
+- Route /logout removed.
+- TODO: honouring attribute 'came_from' after login.
+- Better documentation.

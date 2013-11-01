@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 
-version = '0.2'
+version = '0.3'
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -34,10 +34,19 @@ setup(name='kotti_velruse',
       description="Kotti authentication with Velruse: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and others",
       long_description=long_description,
       classifiers=[
-          "Programming Language :: Python",
+          "Environment :: Web Environment",
+          "Framework :: Pylons",
           "Framework :: Pyramid",
+          "Intended Audience :: Developers",
+          "License :: OSI Approved :: BSD License",
+          "Operating System :: OS Independent",
+          "Programming Language :: Python",
+          "Programming Language :: Python :: 2.6",
+          "Programming Language :: Python :: 2.7",
           "Topic :: Internet :: WWW/HTTP",
+          "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
           "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+          "Topic :: Software Development :: User Interfaces",
       ],
       keywords='pyramid kotti authentication velruse openid oauth2 google yahoo live facebook twitter',
       author='Richard Gomes',
@@ -49,4 +58,19 @@ setup(name='kotti_velruse',
       zip_safe=False,
       setup_requires=setup_requires, 
       install_requires=install_requires,
+
+      #TODO
+      #entry_points={
+      #    'fanstatic.libraries': [
+      #        'kotti_tagcloud = kotti_tagcloud.fanstatic:library',
+      #    ],
+      #},
+      #message_extractors={
+      #    'kotti_tagcloud': [
+      #        ('**.py', 'lingua_python', None),
+      #        ('**.zcml', 'lingua_xml', None),
+      #        ('**.pt', 'lingua_xml', None),
+      #    ]
+      #},
+
       )

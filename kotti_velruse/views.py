@@ -1,15 +1,29 @@
-from pyramid.httpexceptions import HTTPFound, HTTPNotFound
-from pyramid.request import Request
-
 from velruse.api import login_url
 from velruse.app import find_providers
 
-from kotti_velruse import log, _
-from kotti_velruse.events import before_kotti_velruse_loggedin, before_kotti_velruse_loggedout, \
-                                 after_kotti_velruse_loggedin,  after_kotti_velruse_loggedout
+from pyramid.httpexceptions import HTTPNotFound
+from pyramid.request import Request
+
+from kotti.util import _
+
+from kotti.views.login import logout
+from kotti.views.login import forbidden_redirect
+from kotti.views.login import forbidden_view
+from kotti.views.login import forbidden_view_html
+
+from kotti_velruse import log
+from kotti_velruse.events import after_kotti_velruse_loggedin
+
 
 
 def includeme(config):
+    # wiring views from kotti.views.login
+    config.add_route('logout',              '/logout')
+    config.add_route('forbidden_redirect',  '/forbidden_redirect')
+    config.add_route('forbidden_view',      '/forbidden_view')
+    config.add_route('forbidden_view_html', '/forbidden_view_html')
+
+    # views provided by this plugin
     config.add_view(login,
                     route_name='login',
                     request_method='GET',
@@ -23,22 +37,29 @@ def includeme(config):
     config.add_view(logout,
                     route_name='logout',
                     permission='view')
+    config.add_view(forbidden_redirect,
+                    route_name='forbidden_redirect',
+                    accept='text/html')
+    config.add_view(forbidden_view,
+                    route_name='forbidden_view')
+    config.add_view(forbidden_view_html,
+                    route_name='forbidden_view_html',
+                    renderer='kotti:templates/forbidden.pt')
 
     config.add_route('login',     '/login')
-    config.add_route('login_',    '/login_')
+    config.add_route('login_',    '/login_') #TODO: need to merge with /login
     config.add_route('logged_in', '/logged_in')
-    config.add_route('logout',    '/logout')
 
     try:
         import openid_selector
-        log.info('openid_selector loaded successfully')
         config.add_static_view(name='js',     path='openid_selector:/js')
         config.add_static_view(name='css',    path='openid_selector:/css')
         config.add_static_view(name='images', path='openid_selector:/images')
+        log.info(_(u'openid_selector loaded successfully'))
     except Exception as e:
         log.error(e)
         raise e
-    log.info('kotti_velruse views are configured.')
+    log.info(_(u'kotti_velruse views are configured.'))
     
 
 def login(request):
@@ -91,7 +112,6 @@ def login_(request):
 
     redirect = Request.blank(velruse_url, POST=payload)
     try:
-        before_kotti_velruse_loggedin(request, payload)
         response = request.invoke_subrequest( redirect )
         return response
     except Exception as e:
@@ -100,28 +120,13 @@ def login_(request):
         raise HTTPNotFound(message).exception
 
 
-
 def logged_in(request):
     token = request.params['token']
     storage = request.registry.velruse_store
     try:
         json = storage.retrieve(token)
-        after_kotti_velruse_loggedin(request, json)
+        after_kotti_velruse_loggedin(json, request)
         return json
-    except Exception as e:
-        log.error(e.message)
-        raise HTTPNotFound(e.message).exception
-
-
-def logout(request):
-    from pyramid.security import forget
-    try:
-        before_kotti_velruse_loggedout(request)
-        request.session.invalidate()
-        request.session.flash( _(u'Session logged out.') )
-        headers = forget(request)
-        after_kotti_velruse_loggedout()
-        return HTTPFound(location=request.application_url, headers=headers)
     except Exception as e:
         log.error(e.message)
         raise HTTPNotFound(e.message).exception

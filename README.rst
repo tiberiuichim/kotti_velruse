@@ -1,12 +1,9 @@
-
-kotti_velruse
-=============
-
-| Code_ | Bugs_ | Forum_ | License_ | Contact_
+| Code_ | Bugs_ | Forum_ | Docs_ | License_ | Contact_
 
 .. _Code : http://github.com/frgomes/kotti_velruse
 .. _Bugs : http://github.com/frgomes/kotti_velruse/issues
 .. _Forum : http://github.com/frgomes/kotti_velruse/wiki
+.. _Docs : http://kotti_velruse.readthedocs.org
 .. _License : http://opensource.org/licenses/BSD-3-Clause
 .. _Contact : http://github.com/~frgomes
 
@@ -14,20 +11,23 @@ kotti_velruse
 kotti_velruse is a `Kotti`_ plugin which provides authentication via `Velruse`_, using
 methods such as: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and others
 
-.. _`Kotti`: http://kotti.readthedocs.org
+`Find out more about Kotti`_
+
+.. _`Kotti`: http://pypi.python.org/pypi/Kotti
 .. _`Velruse`: http://velruse.readthedocs.org
+.. _`Find out more about Kotti`: http://pypi.python.org/pypi/Kotti
 
 
-Configuration
--------------
+Setup
+=====
 
-1. Insert *kotti_velruse.kotti_configure_ on *kotti.configurators* 
+1. Insert ``kotti_velruse.kotti_configure`` on ``kotti.configurators``
 
     kotti.configurators = kotti_tinymce.kotti_configure
                           kotti_velruse.kotti_configure
 
 
-2. Insert the block below under section [app:main]
+2. Insert the block below under section ``[app:main]``
 
 ::
 
@@ -131,7 +131,7 @@ Configuration
     ### --------------------------------------------------------------------------
 
 
-3. Please adjust variable *realm* in development.ini.
+3. Please adjust variable ``realm`` in ``development.ini``.
 
 4. Adjust provider configurations accordingly to to your affiliation keys and
    passwords.
@@ -145,7 +145,7 @@ Configuration
 
 
 Dependencies
-------------
+============
 
 This plugin depends on modified versions of:
 

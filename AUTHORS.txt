@@ -1,4 +1,4 @@
 Authors
 =======
 
-Richard Gomes [frgomes]
+Richard Gomes <rgomes.info@gmail.com>
