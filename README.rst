@@ -166,7 +166,7 @@ the current browsing session.
 
 kotti_velruse IS NOT responsible for creating or managing user credentials in
 any way. kotti_velsure IS NOT responsible even for querying user credentials, in
-order to find the one which matches to the authenticated user identity. These
+order to find the one which matches the authenticated user identity. These
 tasks are performed by `kotti_accounts`_, which intercepts notifications emitted
 by kotti_velruse when an user successfully authenticates.
 
