@@ -11,10 +11,10 @@
 `kotti_velruse`_ is a `Kotti`_ plugin which provides authentication via `Velruse`_, using
 methods such as: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and others
 
+`Find out more about Kotti`_
+
 .. note:: `kotti_accounts`_ needs to be installed alongside with `kotti_velruse`_.
 
-
-`Find out more about Kotti`_
 
 .. _`Kotti`: http://pypi.python.org/pypi/Kotti
 .. _`Find out more about Kotti`: http://pypi.python.org/pypi/Kotti
