@@ -1,6 +1,7 @@
 from velruse.api import login_url
 from velruse.app import find_providers
 
+from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
 
@@ -24,16 +25,16 @@ def includeme(config):
     config.add_route('forbidden_view_html', '/forbidden_view_html')
 
     # views provided by this plugin
-    config.add_view(login,
+    config.add_view(login_select,
                     route_name='login',
                     request_method='GET',
                     renderer='kotti_velruse:templates/login.mako')
-    config.add_view(login_,
-                    route_name='login_',
+    config.add_view(login_verify,
+                    route_name='login',
+                    request_method='POST',
                     renderer='json')
     config.add_view(logged_in,
-                    route_name='logged_in',
-                    renderer='json')
+                    route_name='logged_in')
     config.add_view(logout,
                     route_name='logout',
                     permission='view')
@@ -47,7 +48,6 @@ def includeme(config):
                     renderer='kotti:templates/forbidden.pt')
 
     config.add_route('login',     '/login')
-    config.add_route('login_',    '/login_') #TODO: need to merge with /login
     config.add_route('logged_in', '/logged_in')
 
     try:
@@ -57,25 +57,27 @@ def includeme(config):
         config.add_static_view(name='images', path='openid_selector:/images')
         log.info(_(u'openid_selector loaded successfully'))
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         raise e
     log.info(_(u'kotti_velruse views are configured.'))
     
 
-def login(request):
+def login_select(context, request):
+    came_from = request.params.get('came_from', request.resource_url(context))
     settings = request.registry.settings
     try:
         #TODO:: before_kotti_velruse_loggedin(request)
         return {
             'project' : settings['kotti.site_title'],
-            'login_url': request.route_url('login_'),
+            'came_from': came_from,
+            'login_url': request.route_url('login'),
         }
     except Exception as e:
-        log.error(e.message)
+        log.exception(e)
         raise HTTPNotFound(e.message).exception
 
 
-def login_(request):
+def login_verify(context, request):
     ######################################################################################
     #                                                                                    #
     # Let's clarify the difference between "provider" and "method" in this function:     #
@@ -115,18 +117,34 @@ def login_(request):
         response = request.invoke_subrequest( redirect )
         return response
     except Exception as e:
-        log.error(e.message)
+        log.exception(e)
         message = _(u'Provider/method: {}/{} :: {}').format(provider, method, e.message)
         raise HTTPNotFound(message).exception
 
 
-def logged_in(request):
+
+from pyramid.security import remember
+
+
+from kotti_velruse.events import AfterLoggedInObject
+
+
+def logged_in(context, request):
+    """Velruse automatically requests /logged_in when authentication succeeds"""
+    came_from = request.params.get('came_from', request.resource_url(context))
     token = request.params['token']
     storage = request.registry.velruse_store
     try:
         json = storage.retrieve(token)
-        after_kotti_velruse_loggedin(json, request)
-        return json
+        obj = AfterLoggedInObject(json)
+        after_kotti_velruse_loggedin(obj, request)
+        print(obj.principal.id)
+        print(obj.principal.name)
+        print(obj.principal.email)
+        headers = remember(request, str(obj.principal.id))
+        request.session.flash(
+            _(u"Welcome, ${user}!", mapping=dict(user=obj.principal.name)), 'success')
+        return HTTPFound(location=came_from, headers=headers)
     except Exception as e:
-        log.error(e.message)
+        log.exception(e)
         raise HTTPNotFound(e.message).exception

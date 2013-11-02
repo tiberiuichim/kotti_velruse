@@ -27,9 +27,10 @@
 <body>
 	<h2>Login to ${project}</h2>
 	<!-- Simple OpenID Selector -->
-	<form action="${login_url}" method="get" id="openid_form">
-		<input type="hidden" id="action" name="action" value="verify" />
-		<input type="hidden" id="method" name="method" value="unknown" />
+	<form action="${login_url}" method="post" id="openid_form">
+		<input type="hidden" id="action"    name="action" value="verify" />
+		<input type="hidden" id="method"    name="method" value="unknown" />
+                <input type="hidden" id="came_from" name="came_from" value="${came_from}" />
 		<fieldset>
 			<legend>Sign-in</legend>
 			<div id="openid_choice">
