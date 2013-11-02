@@ -1,11 +1,9 @@
 import os
 from setuptools import setup, find_packages
 
+here    = os.path.abspath(os.path.dirname(__file__))
+version = open(os.path.join(here, 'VERSION')).readlines()[0].strip()
 
-version = '0.3'
-
-
-here = os.path.abspath(os.path.dirname(__file__))
 README  = open(os.path.join(here, 'README.rst')).read()
 AUTHORS = open(os.path.join(here, 'AUTHORS.txt')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
