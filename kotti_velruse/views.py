@@ -4,6 +4,7 @@ from velruse.app import find_providers
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPNotFound
 from pyramid.request import Request
+from pyramid.security import remember
 
 from kotti.util import _
 
@@ -13,8 +14,8 @@ from kotti.views.login import forbidden_view
 from kotti.views.login import forbidden_view_html
 
 from kotti_velruse import log
+from kotti_velruse.events import AfterLoggedInObject
 from kotti_velruse.events import after_kotti_velruse_loggedin
-
 
 
 def includeme(config):
@@ -120,13 +121,6 @@ def login_verify(context, request):
         log.exception(e)
         message = _(u'Provider/method: {}/{} :: {}').format(provider, method, e.message)
         raise HTTPNotFound(message).exception
-
-
-
-from pyramid.security import remember
-
-
-from kotti_velruse.events import AfterLoggedInObject
 
 
 def logged_in(context, request):
