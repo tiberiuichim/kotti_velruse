@@ -8,14 +8,19 @@
 .. _Contact : http://github.com/~frgomes
 
 
-kotti_velruse is a `Kotti`_ plugin which provides authentication via `Velruse`_, using
+`kotti_velruse`_ is a `Kotti`_ plugin which provides authentication via `Velruse`_, using
 methods such as: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and others
+
+.. note:: `kotti_accounts`_ needs to be installed alongside with `kotti_velruse`_.
+
 
 `Find out more about Kotti`_
 
 .. _`Kotti`: http://pypi.python.org/pypi/Kotti
-.. _`Velruse`: http://velruse.readthedocs.org
 .. _`Find out more about Kotti`: http://pypi.python.org/pypi/Kotti
+.. _`Velruse`: http://velruse.readthedocs.org
+.. _`kotti_velruse`: http://pypi.python.org/pypi/kotti_velruse
+.. _`kotti_accounts`: http://pypi.python.org/pypi/kotti_accounts
 
 
 Setup
@@ -25,12 +30,14 @@ Setup
 
     kotti.configurators = kotti_tinymce.kotti_configure
                           kotti_velruse.kotti_configure
-
+                          kotti_accounts.kotti_configure
 
 2. Insert the block below under section ``[app:main]``
 
 ::
 
+    [app:main]
+    
     ### --------------------------------------------------------------------------
     # velruse configuration
     #
@@ -142,6 +149,26 @@ Setup
 5. Navigate to page /login like shown below:
 
     $ firefox http://localhost:6543/login
+
+
+How it works
+============
+
+`kotti_velruse`_ allows users to employ any identity they already have on popular
+providers like Google, Yahoo, LinkedIn, Twitter, Facebook or any OpenID enabled
+provider.
+
+kotti_velruse is responsible for authentication workflow solely, which starts when
+the user selects the authentication provider and finishes when the authentication
+provider responds with a record containing user details, such as name and email
+address.
+
+Kotti_velruse IS NOT responsible for effectively assigning user credentials to
+the current browsing session. This task is performed by `kotti_accounts`_, which
+intercepts notifications emitted by kotti_velruse when an user successfully
+authenticates.
+
+See also: `kotti_accounts`_
 
 
 Dependencies

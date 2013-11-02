@@ -58,7 +58,7 @@ def includeme(config):
         config.add_static_view(name='images', path='openid_selector:/images')
         log.info(_(u'openid_selector loaded successfully'))
     except Exception as e:
-        log.exception(e)
+        log.exception(_(u'Failure loading openid-selector.\nStacktrace follows:\n{}').format(e))
         raise e
     log.info(_(u'kotti_velruse views are configured.'))
     
@@ -118,8 +118,8 @@ def login_verify(context, request):
         response = request.invoke_subrequest( redirect )
         return response
     except Exception as e:
-        log.exception(e)
-        message = _(u'Provider/method: {}/{} :: {}').format(provider, method, e.message)
+        message = _(u'Provider/method: {}/{} :: {}.').format(provider, method, e.message)
+        log.exception(_(u'{}\nStacktrace follows:\n{}').format(message, e))
         raise HTTPNotFound(message).exception
 
 
@@ -144,5 +144,5 @@ def logged_in(context, request):
             _(u"Welcome, ${user}!", mapping=dict(user=obj.principal.name)), 'success')
         return HTTPFound(location=came_from, headers=headers)
     except Exception as e:
-        log.exception(e)
+        log.exception(_(u'JSON received from provider: {}\nStacktrace follows:\n{}').format(json, e))
         raise HTTPNotFound(e.message).exception
