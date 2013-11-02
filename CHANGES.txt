@@ -14,9 +14,13 @@ Changelog
 - Initial version as a proper Kotti plugin.
 
 
-0.2.1 (TBD)
------------
+0.3 (02-Nov-2013)
+-----------------
 
-- Route /logout removed.
-- TODO: honouring attribute 'came_from' after login.
+- Honouring attribute 'came_from', in order to return to the previous page.
+- Better communication protocol with kotti_accounts (or any other module) which
+  is responsible for handling event AfterKottiVelruseLoggedIn.
+- Creates credentials in the current browser session when kotti_accounts returns
+  a valid Principal.
+- Code review.
 - Better documentation.
