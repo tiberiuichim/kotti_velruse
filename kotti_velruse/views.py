@@ -132,10 +132,14 @@ def logged_in(context, request):
         json = storage.retrieve(token)
         obj = AfterLoggedInObject(json)
         after_kotti_velruse_loggedin(obj, request)
-        print(obj.principal.id)
-        print(obj.principal.name)
-        print(obj.principal.email)
-        headers = remember(request, str(obj.principal.id))
+        principal = obj.principal
+        identities = obj.identities
+        if principal is None or identities is None:
+            raise RuntimeError(_(u'kotti_accounts not handling authentication events'))
+
+        log.debug(_('User authenticated: id={}, name="{}", email="{}"').format(
+            principal.id, principal.name, principal.email))
+        headers = remember(request, str(principal.id))
         request.session.flash(
             _(u"Welcome, ${user}!", mapping=dict(user=obj.principal.name)), 'success')
         return HTTPFound(location=came_from, headers=headers)
