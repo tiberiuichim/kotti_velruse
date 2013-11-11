@@ -24,3 +24,15 @@ Changelog
   a valid Principal.
 - Code review.
 - Better documentation.
+
+
+0.3.1 (06-Nov-2013)
+-------------------
+- Better integration with kotti_accounts
+
+
+0.3.2 (11-Nov-2013)
+-------------------
+- Better integration with Preferences page (/@@prefs)
+
+

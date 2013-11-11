@@ -1,3 +1,7 @@
+import sys
+
+from pprint import pformat
+
 from velruse.api import login_url
 from velruse.app import find_providers
 
@@ -7,25 +11,22 @@ from pyramid.request import Request
 from pyramid.security import remember
 
 from kotti.util import _
-
-from kotti.views.login import logout
-from kotti.views.login import forbidden_redirect
-from kotti.views.login import forbidden_view
-from kotti.views.login import forbidden_view_html
+from kotti.views.util import is_root
 
 from kotti_velruse import log
 from kotti_velruse.events import AfterLoggedInObject
 from kotti_velruse.events import after_kotti_velruse_loggedin
 
 
-def includeme(config):
-    # wiring views from kotti.views.login
-    config.add_route('logout',              '/logout')
-    config.add_route('forbidden_redirect',  '/forbidden_redirect')
-    config.add_route('forbidden_view',      '/forbidden_view')
-    config.add_route('forbidden_view_html', '/forbidden_view_html')
 
-    # views provided by this plugin
+def includeme(config):
+    includeme_views(config)
+    includeme_override_views(config)
+    includeme_static_views(config)
+    log.info('{} configured'.format(__name__))
+
+
+def includeme_views(config):
     config.add_view(login_select,
                     route_name='login',
                     request_method='GET',
@@ -36,21 +37,20 @@ def includeme(config):
                     renderer='json')
     config.add_view(logged_in,
                     route_name='logged_in')
-    config.add_view(logout,
-                    route_name='logout',
-                    permission='view')
-    config.add_view(forbidden_redirect,
-                    route_name='forbidden_redirect',
-                    accept='text/html')
-    config.add_view(forbidden_view,
-                    route_name='forbidden_view')
-    config.add_view(forbidden_view_html,
-                    route_name='forbidden_view_html',
-                    renderer='kotti:templates/forbidden.pt')
 
     config.add_route('login',     '/login')
     config.add_route('logged_in', '/logged_in')
 
+
+def includeme_override_views(config):
+    # override @@login
+    config.add_view(name='login',
+                    view=login_select,
+                    custom_predicates=( is_root, ),
+                    renderer='kotti_velruse:templates/login.mako')
+
+
+def includeme_static_views(config):
     try:
         import openid_selector
         config.add_static_view(name='js',     path='openid_selector:/js')
@@ -60,10 +60,11 @@ def includeme(config):
     except Exception as e:
         log.exception(_(u'Failure loading openid-selector.\nStacktrace follows:\n{}').format(e))
         raise e
-    log.info(_(u'kotti_velruse views are configured.'))
-    
 
+
+    
 def login_select(context, request):
+    log.debug( sys._getframe().f_code.co_name )
     came_from = request.params.get('came_from', request.resource_url(context))
     settings = request.registry.settings
     try:
@@ -97,6 +98,14 @@ def login_verify(context, request):
     #                                                                                    #
     ######################################################################################
 
+    log.debug( sys._getframe().f_code.co_name )
+
+    ####################################################################################
+    #TODO: should pass "came_from" to view "logged_in" so that we can redirect
+    #      to the previous page. Sorry... I failed to make it work :(
+    #-- came_from = request.params.get('came_from', request.resource_url(context))
+    ####################################################################################
+
     provider = request.params['provider']
     method = request.params['method']
 
@@ -104,18 +113,16 @@ def login_verify(context, request):
     if not method in find_providers(settings):
         raise HTTPNotFound('Provider/method {}/{} is not configured'.format(provider, method)).exception
 
-    velruse_url = login_url(request, method)
-
     payload = dict(request.params)
-    if 'yahoo'    == method: payload['oauth'] = 'true'
-    if 'openid'   == method: payload['use_popup'] = 'false'
     payload['format'] = 'json'
+    if 'yahoo'  == method: payload['oauth'] = 'true'
+    if 'openid' == method: payload['use_popup'] = 'false'
     del payload['provider']
     del payload['method']
 
-    redirect = Request.blank(velruse_url, POST=payload)
     try:
-        response = request.invoke_subrequest( redirect )
+        url = login_url(request, method)
+        response = request.invoke_subrequest( Request.blank(url, POST=payload) )
         return response
     except Exception as e:
         message = _(u'Provider/method: {}/{} :: {}.').format(provider, method, e.message)
@@ -124,25 +131,46 @@ def login_verify(context, request):
 
 
 def logged_in(context, request):
-    """Velruse automatically requests /logged_in when authentication succeeds"""
-    came_from = request.params.get('came_from', request.resource_url(context))
+    """Velruse redirects to /logged_in when authentication succeeds"""
+
+    log.debug( sys._getframe().f_code.co_name )
+
+    ####################################################################################
+    #TODO: should receive "came_from" somehow so that we can redirect to the previous
+    #      page. Sorry... I failed to make it work :(
+    #-- came_from = request.params.get('came_from', request.resource_url(context))
+    ####################################################################################
+
     token = request.params['token']
     storage = request.registry.velruse_store
     try:
+        user = request.user
         json = storage.retrieve(token)
-        obj = AfterLoggedInObject(json)
+        obj = AfterLoggedInObject(json, user)
         after_kotti_velruse_loggedin(obj, request)
         principal = obj.principal
         identities = obj.identities
         if principal is None or identities is None:
-            raise RuntimeError(_(u'kotti_accounts not handling authentication events'))
+            raise RuntimeError(_(u'Authentication events not being handled properly'))
 
         log.debug(_('User authenticated: id={}, name="{}", email="{}"').format(
             principal.id, principal.name, principal.email))
-        headers = remember(request, str(principal.id))
-        request.session.flash(
-            _(u"Welcome, ${user}!", mapping=dict(user=obj.principal.name)), 'success')
-        return HTTPFound(location=came_from, headers=headers)
+        headers = remember(request, principal.name)
+
+        ###########################################################################################
+        #TODO: at this point, we should actually redirect to the address which should be passed on
+        #      variable "came_from". Because I failed to pass this variable around, I at least
+        #      return to page @@prefs when user is not None.
+        ###########################################################################################
+        redirect = request.resource_url(context)
+        if user is None:
+            request.session.flash(
+                _(u"Welcome, ${user}!", mapping=dict(user=principal.title or principal.name)), 'success')
+        else:
+            redirect += "@@prefs"
+
+        log.debug('redirect to {} with headers = {}'.format(redirect, headers))
+        return HTTPFound(location=redirect, headers=headers)
     except Exception as e:
         log.exception(_(u'JSON received from provider: {}\nStacktrace follows:\n{}').format(json, e))
         raise HTTPNotFound(e.message).exception

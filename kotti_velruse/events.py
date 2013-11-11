@@ -10,7 +10,8 @@ def after_kotti_velruse_loggedin(userLoginObject, request):
 
 
 class AfterLoggedInObject(object):
-    def __init__(self, json):
+    def __init__(self, json, user=None):
         self.json = json
+        self.user = user
         self.principal = None
         self.identities = None
