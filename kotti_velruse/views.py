@@ -146,8 +146,8 @@ def logged_in(context, request):
     try:
         user = request.user
         json = storage.retrieve(token)
-        obj = AfterLoggedInObject(json, user)
-        after_kotti_velruse_loggedin(obj, request)
+        obj = AfterLoggedInObject(json, user, request)
+        after_kotti_velruse_loggedin(obj)
         principal = obj.principal
         identities = obj.identities
         if principal is None or identities is None:

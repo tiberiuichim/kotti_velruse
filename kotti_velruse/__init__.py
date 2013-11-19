@@ -1,3 +1,6 @@
+__version__ = '0.3.3'
+
+
 log = __import__('logging').getLogger(__name__)
 
 

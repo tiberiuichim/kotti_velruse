@@ -13,7 +13,9 @@ methods such as: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and othe
 
 `Find out more about Kotti`_
 
-.. note:: `kotti_accounts`_ needs to be installed alongside with `kotti_velruse`_.
+.. note::
+
+     `kotti_accounts`_ needs to be installed alongside with `kotti_velruse`_.
 
 
 .. _`Kotti`: http://pypi.python.org/pypi/Kotti
@@ -23,6 +25,20 @@ methods such as: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and othe
 .. _`kotti_accounts`: http://pypi.python.org/pypi/kotti_accounts
 
 
+
+For the impatient
+=================
+
+There's a demo which shows how it works.
+Just run the commands below inside a clean virtualenv.
+
+::
+
+    git clone https://github.com/frgomes/kotti_velruse_demo.git
+    cd kotti_velruse_demo
+    ./run-server.sh
+
+
 Setup
 =====
 
@@ -30,9 +46,9 @@ Setup
 
 ::
 
-    kotti.configurators = kotti_tinymce.kotti_configure
-                          kotti_velruse.kotti_configure
+    kotti.configurators = kotti_velruse.kotti_configure
                           kotti_accounts.kotti_configure
+                          # other plugins
 
 2. Insert the block below under section ``[app:main]``
 
@@ -145,8 +161,10 @@ Setup
 4. Adjust provider configurations accordingly to to your affiliation keys and
    passwords.
 
-.. note:: Several providers work out of the box, like Google Hybrid, Yahoo and most
-          OpenID providers.
+.. note::
+
+    Several providers work out of the box, like Google Hybrid, Yahoo and most
+    OpenID providers.
 
 5. Navigate to page /login like shown below:
 
@@ -183,3 +201,9 @@ This plugin depends on modified versions of:
 * velruse: https://github.com/frgomes/velruse/tree/feature.kotti_auth
 
 * openid-selector: https://github.com/frgomes/openid-selector
+
+
+Support
+=======
+
+Please find links on the top of this page.

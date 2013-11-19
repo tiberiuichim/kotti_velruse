@@ -1,8 +1,12 @@
-import os
+import os, re
 from setuptools import setup, find_packages
 
-here    = os.path.abspath(os.path.dirname(__file__))
-version = open(os.path.join(here, 'VERSION')).readlines()[0].strip()
+name = 'kotti_velruse'
+
+here = os.path.abspath(os.path.dirname(__file__))
+init_file = os.path.join(here, name, '__init__.py')
+version_re = "\s*__version__\s*=\s*((\"([^\"]|\\\\\")*\"|'([^']|\\\\')*'))"
+version = re.search(version_re, open(init_file).read()).groups()[0][1:-1]
 
 README  = open(os.path.join(here, 'README')).read()
 AUTHORS = open(os.path.join(here, 'AUTHORS')).read()
@@ -27,7 +31,7 @@ install_requires = [
     ]
 
 
-setup(name='kotti_velruse',
+setup(name=name,
       version=version,
       description="Kotti authentication with Velruse: OpenID, OAuth2, Google, Yahoo, Live, Facebook, Twitter and others",
       long_description=long_description,

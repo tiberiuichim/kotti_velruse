@@ -35,4 +35,8 @@ Changelog
 -------------------
 - Better integration with Preferences page (/@@prefs)
 
-
+0.3.3 (18-Nov-2013)
+-------------------
+- Move version number to package __init__.py
+- Pass ``request`` as part of ``event`` passed to AfterKottiVelruseLoggedIn
+- Better documentation
