@@ -62,7 +62,7 @@ def includeme_static_views(config):
         raise e
 
 
-    
+
 def login_select(context, request):
     log.debug( sys._getframe().f_code.co_name )
     came_from = request.params.get('came_from', request.resource_url(context))
@@ -80,6 +80,7 @@ def login_select(context, request):
 
 
 def login_verify(context, request):
+    import pdb; pdb.set_trace()
     ######################################################################################
     #                                                                                    #
     # Let's clarify the difference between "provider" and "method" in this function:     #
@@ -143,6 +144,7 @@ def logged_in(context, request):
 
     token = request.params['token']
     storage = request.registry.velruse_store
+    json = None
     try:
         user = request.user
         json = storage.retrieve(token)
@@ -172,5 +174,9 @@ def logged_in(context, request):
         log.debug('redirect to {} with headers = {}'.format(redirect, headers))
         return HTTPFound(location=redirect, headers=headers)
     except Exception as e:
-        log.exception(_(u'JSON received from provider: {}\nStacktrace follows:\n{}').format(json, e))
+        if json:
+            log.exception(_(u'JSON received from provider: {}\nStacktrace follows:\n{}').format(json, e))
+        else:
+            log.exception(_("No JSON found in storage for token {}.\nStacktrace follows:\n{}").format(token, e))
+
         raise HTTPNotFound(e.message).exception
